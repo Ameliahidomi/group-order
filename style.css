@@ -1,0 +1,125 @@
+body {
+  margin: 0;
+  font-family: 'Microsoft JhengHei', sans-serif;
+  overflow-x: hidden;
+  text-align: center;
+}
+
+.page {
+  display: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: lighten;
+  min-height: 100vh;
+  padding: 2em;
+}
+
+.page.active { display: block; }
+
+.home-content {
+  margin-top: 20vh;
+  color: #660000;
+}
+
+h1 {
+  color: #b50000;
+  font-weight: 900;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px #fff, -2px -2px 4px #fff, 0 0 8px rgba(255,255,255,0.5);
+  margin-bottom: 0.3em;
+}
+
+p {
+  color: #660000;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(255,255,255,0.5);
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+button {
+  background: linear-gradient(45deg, #ff8080, #b50000);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6em 1.2em;
+  margin: 0.3em;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.animated {
+  animation: float 2s infinite ease-in-out alternate;
+}
+
+@keyframes float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+.redpacket {
+  position: fixed;
+  top: -10vh;
+  width: 30px;
+  height: 40px;
+  background: url('https://cdn-icons-png.flaticon.com/512/2933/2933253.png') no-repeat center/contain;
+  animation: fall linear forwards;
+  z-index: 100;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(110vh); opacity: 0.5; }
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #b50000;
+}
+
+#cartIcon {
+  font-size: 1.5rem;
+  position: relative;
+  cursor: pointer;
+}
+
+#cartCount {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: gold;
+  color: #b50000;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+}
+
+.cart-panel {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 260px;
+  height: 100%;
+  background: #fff8e1;
+  box-shadow: -3px 0 6px rgba(0,0,0,0.2);
+  transition: right 0.5s;
+  padding: 1em;
+  text-align: left;
+  z-index: 200;
+}
+
+.cart-panel.active { right: 0; }
+
+.cart-panel ul {
+  list-style: none;
+  padding: 0;
+}
