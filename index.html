@@ -1,65 +1,41 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>年貨團購「馬」上開跑囉！</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://apis.google.com/js/api.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>年貨團購系統</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body onload="initApp()">
+<body onload="startRedPackets()">
 
-<div id="redpacket-container"></div>
-
-<section id="homePage" class="page active" style="background-image:url('background.jpg')">
-  <div class="home-content">
+  <div id="homePage" class="page">
     <img src="logo.png" width="80" class="animated" />
     <h1>年貨團購「馬」上開跑囉！</h1>
     <p>一起揪團買年貨，美食享受過馬年，團主樂得笑開懷！！</p>
     <button onclick="showPage('orderPage')">🛍️ 開始訂購</button>
     <button onclick="showPage('queryPage')">🔎 查看我的訂單</button>
   </div>
-</section>
 
-<section id="orderPage" class="page" style="background-image:url('order-bg.png')">
-  <div class="order-header">
+  <div id="orderPage" class="page hidden">
     <h2>🛒 填寫訂單</h2>
-    <div id="cartIcon" onclick="toggleCart()">🛒<span id="cartCount">0</span></div>
+    <form id="orderForm">
+      <input type="text" id="name" placeholder="您的姓名" required>
+      <select id="vendor" required></select>
+      <select id="item" required></select>
+      <input type="number" id="qty" placeholder="數量" min="1" value="1" required>
+      <button type="submit">送出訂單</button>
+      <button type="button" onclick="showPage('homePage')">🏠 返回首頁</button>
+    </form>
   </div>
 
-  <form id="orderForm" onsubmit="submitOrder(event)">
-    <label>訂購人姓名：</label>
-    <input type="text" id="name" required><br>
-
-    <label>商家：</label>
-    <select id="vendor" onchange="populateItems()"></select><br>
-
-    <label>商品名稱：</label>
-    <select id="item"></select><br>
-
-    <label>數量：</label>
-    <input type="number" id="qty" min="1" value="1"><br>
-
-    <button type="button" onclick="addToCart()">加入購物車</button>
-    <button type="submit">送出訂單</button>
-    <button type="button" onclick="showPage('homePage')">🏠 返回首頁</button>
-  </form>
-
-  <div id="cartList" class="cart-panel">
-    <h3>🧺 購物車清單</h3>
-    <ul id="cartItems"></ul>
-    <button onclick="clearCart()">清空購物車</button>
+  <div id="queryPage" class="page hidden">
+    <h2>🔎 查詢我的訂單</h2>
+    <input type="text" id="queryName" placeholder="輸入姓名查詢">
+    <button onclick="queryOrders()">查詢</button>
+    <div id="orderList"></div>
+    <button onclick="showPage('homePage')">🏠 返回首頁</button>
   </div>
-</section>
 
-<section id="queryPage" class="page" style="background-image:url('order-bg.png')">
-  <h2>🔎 查詢訂單</h2>
-  <input type="text" id="queryName" placeholder="輸入姓名查詢">
-  <button onclick="queryOrders()">查詢</button>
-  <div id="queryResult"></div>
-  <button onclick="showPage('homePage')">🏠 返回首頁</button>
-</section>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

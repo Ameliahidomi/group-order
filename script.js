@@ -1,141 +1,102 @@
-const SHEET_ID = '1XQzmPnXohvVda2ybCwLrRZPm1CD6XnAWpMSFRpHBcQ4';
-const PRODUCTS_SHEET = 'Products';
-const ORDERS_SHEET = 'Orders';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU4Nbezh-QRxgf8opzwzQU2FotsjITXdrkOMYFVn_FabSP6CAad6PuJJeDYV9J4lv3/exec';
-
-let products = [];
-let cart = [];
-
 let redPacketTimer;
+
+// 🧧 紅包飄落
 function startRedPackets() {
   stopRedPackets();
   redPacketTimer = setInterval(() => {
     for (let i = 0; i < 6; i++) {
-      const rp = document.createElement("div");
-      rp.className = "redpacket";
-      rp.style.left = Math.random() * 100 + "vw";
-      rp.style.animationDuration = 5 + Math.random() * 4 + "s";
-      rp.style.animationDelay = Math.random() * 2 + "s";
+      const rp = document.createElement('div');
+      rp.className = 'redpacket';
+      rp.style.left = Math.random() * 100 + 'vw';
+      rp.style.animationDuration = 5 + Math.random() * 4 + 's';
+      rp.style.animationDelay = Math.random() * 2 + 's';
       document.body.appendChild(rp);
       setTimeout(() => rp.remove(), 9000);
     }
   }, 1200);
 }
+
 function stopRedPackets() {
   clearInterval(redPacketTimer);
   document.querySelectorAll('.redpacket').forEach(e => e.remove());
 }
 
-function initApp() {
-  startRedPackets();
-  loadProducts();
-}
-
+// 顯示分頁
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if (id === 'homePage') startRedPackets(); else stopRedPackets();
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
 }
 
+// 讀取產品
 async function loadProducts() {
-  const url = `https://opensheet.elk.sh/${SHEET_ID}/${PRODUCTS_SHEET}`;
-  const res = await fetch(url);
-  products = await res.json();
-  const vendors = [...new Set(products.map(p => p.Vendor))];
+  const res = await fetch(`${SCRIPT_URL}?action=getProducts`);
+  const data = await res.json();
+
   const vendorSel = document.getElementById('vendor');
-  vendorSel.innerHTML = vendors.map(v => `<option>${v}</option>`).join('');
-  populateItems();
-}
-
-function populateItems() {
-  const vendor = document.getElementById('vendor').value;
-  const items = products.filter(p => p.Vendor === vendor);
   const itemSel = document.getElementById('item');
-  itemSel.innerHTML = items.map(i => `<option value="${i.Item}" data-price="${i.Price}">${i.Item} ($${i.Price})</option>`).join('');
+
+  const vendors = [...new Set(data.map(p => p[0]))];
+  vendorSel.innerHTML = '<option value="">選擇商家</option>';
+  vendors.forEach(v => {
+    vendorSel.innerHTML += `<option value="${v}">${v}</option>`;
+  });
+
+  vendorSel.addEventListener('change', () => {
+    const selectedVendor = vendorSel.value;
+    const items = data.filter(p => p[0] === selectedVendor);
+    itemSel.innerHTML = '<option value="">選擇商品</option>';
+    items.forEach(p => {
+      itemSel.innerHTML += `<option value="${p[1]}" data-price="${p[2]}">${p[1]}（$${p[2]}）</option>`;
+    });
+  });
 }
 
-function addToCart() {
-  const name = document.getElementById('name').value.trim();
-  if (!name) return alert('請先輸入姓名');
-  const vendor = document.getElementById('vendor').value;
-  const itemEl = document.getElementById('item').selectedOptions[0];
-  const item = itemEl.value;
-  const price = parseFloat(itemEl.dataset.price);
-  const qty = parseInt(document.getElementById('qty').value);
-  cart.push({ vendor, item, price, qty });
-  updateCartCount();
-  alert('已加入購物車');
-}
-
-function updateCartCount() {
-  document.getElementById('cartCount').textContent = cart.length;
-  renderCart();
-}
-
-function renderCart() {
-  const ul = document.getElementById('cartItems');
-  ul.innerHTML = cart.map((c,i)=>`
-    <li>${c.item} x ${c.qty} = $${c.price*c.qty}
-      <button onclick="removeCartItem(${i})">❌</button></li>`).join('');
-}
-
-function removeCartItem(i){
-  cart.splice(i,1);
-  updateCartCount();
-}
-
-function clearCart(){
-  if(confirm('確定要清空購物車嗎？')){
-    cart = [];
-    updateCartCount();
-  }
-}
-
-function toggleCart(){
-  document.getElementById('cartList').classList.toggle('active');
-}
-
-async function submitOrder(e){
+// 送出訂單
+document.getElementById('orderForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = document.getElementById('name').value.trim();
-  if(!name) return alert('請輸入姓名');
-  if(cart.length===0) return alert('購物車是空的');
+  const vendor = document.getElementById('vendor').value;
+  const itemSel = document.getElementById('item');
+  const item = itemSel.value;
+  const price = itemSel.selectedOptions[0]?.dataset.price || 0;
+  const qty = document.getElementById('qty').value;
 
-  for(const c of cart){
-    const data = {
-      Name: name,
-      Vendor: c.vendor,
-      Item: c.item,
-      Qty: c.qty,
-      Price: c.price * c.qty,
-      Timestamp: new Date().toLocaleString()
-    };
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+  if (!name || !vendor || !item) {
+    alert('請完整填寫訂單資訊');
+    return;
   }
+
+  const data = { action: 'addOrder', name, vendor, item, qty, price };
+  await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
 
   alert('訂單已送出！');
-  cart = [];
-  updateCartCount();
-  showPage('homePage');
+  document.getElementById('orderForm').reset();
+});
+
+// 查詢訂單
+async function queryOrders() {
+  const name = document.getElementById('queryName').value.trim();
+  if (!name) return alert('請輸入姓名');
+
+  const res = await fetch(`${SCRIPT_URL}?action=getOrders&name=${encodeURIComponent(name)}`);
+  const data = await res.json();
+
+  const list = document.getElementById('orderList');
+  if (data.length === 0) {
+    list.innerHTML = '<p>查無訂單資料。</p>';
+    return;
+  }
+
+  let html = '<table border="1" style="margin:auto;border-collapse:collapse;"><tr><th>商家</th><th>商品</th><th>數量</th><th>價格</th><th>時間</th></tr>';
+  data.forEach(o => {
+    html += `<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>${o.price}</td><td>${o.time}</td></tr>`;
+  });
+  html += '</table>';
+  list.innerHTML = html;
 }
 
-async function queryOrders(){
-  const name = document.getElementById('queryName').value.trim();
-  if(!name) return alert('請輸入姓名');
-  const url = `https://opensheet.elk.sh/${SHEET_ID}/${ORDERS_SHEET}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const result = data.filter(o => o.Name === name);
-  const div = document.getElementById('queryResult');
-  if(result.length===0){
-    div.innerHTML = '<p>查無訂單</p>';
-  }else{
-    div.innerHTML = `<table border="1" width="100%">
-      <tr><th>商家</th><th>商品</th><th>數量</th><th>金額</th><th>時間</th></tr>
-      ${result.map(r=>`<tr><td>${r.Vendor}</td><td>${r.Item}</td><td>${r.Qty}</td><td>${r.Price}</td><td>${r.Timestamp}</td></tr>`).join('')}
-    </table>`;
-  }
-}
+document.addEventListener('DOMContentLoaded', loadProducts);
