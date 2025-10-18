@@ -9,7 +9,7 @@ body {
   display: none;
   text-align: center;
   min-height: 100vh;
-  padding-top: 2em;
+  padding: 2em 1em;
 }
 
 .page.active,
@@ -19,7 +19,7 @@ body {
 
 #homePage {
   background:
-    linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)),
+    linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
     url('background.jpg') no-repeat center center / cover;
   display: flex;
   flex-direction: column;
@@ -44,6 +44,14 @@ body {
   margin-bottom: 1em;
 }
 
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 1em;
+}
+
 button {
   padding: 10px 20px;
   font-size: 1rem;
@@ -51,34 +59,99 @@ button {
   color: #fff;
   border: none;
   border-radius: 8px;
-  margin: 5px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
+button:hover {
+  background-color: #ff4444;
+  transform: scale(1.05);
+}
+
+/* 訂單頁 */
 #orderPage {
   background:
-    linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)),
+    linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
     url('order-bg.png') no-repeat center center / cover;
 }
 
 #orderPage h2 {
-  text-align: center;
   color: #b50000;
   font-weight: 900;
-  margin-bottom: 1em;
-  text-shadow: 2px 2px 4px rgba(255,255,255,0.6);
+  text-align: center;
+  margin-bottom: 0.5em;
+  text-shadow: 1px 1px 3px rgba(255,255,255,0.6);
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#cartIcon {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#orderPage form {
+  max-width: 400px;
+  margin: auto;
+  text-align: left;
+}
+
+#orderPage form label {
+  display: block;
+  color: #b50000;
+  font-weight: 700;
+  margin-top: 0.8em;
+  text-align: left;
 }
 
 #orderPage form input,
 #orderPage form select {
-  width: 90%;
-  max-width: 320px;
+  width: 100%;
   padding: 10px;
-  margin: 8px auto;
-  display: block;
   font-size: 1rem;
   border: 2px solid #cc0000;
   border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* 購物車側欄 */
+#cartPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100vh;
+  background: #fffbea;
+  border-left: 3px solid #b50000;
+  box-shadow: -3px 0 6px rgba(0,0,0,0.2);
+  padding: 1em;
+  transition: transform 0.3s ease;
+  transform: translateX(100%);
+  z-index: 1000;
+}
+
+#cartPanel.show {
+  transform: translateX(0);
+}
+
+#cartPanel h3 {
+  color: #b50000;
+}
+
+#cartPanel ul {
+  list-style: none;
+  padding: 0;
+}
+
+#cartPanel li {
+  margin: 6px 0;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
 }
 
 .redpacket {

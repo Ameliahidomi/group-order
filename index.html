@@ -6,28 +6,55 @@
   <title>年貨團購系統</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body onload="startRedPackets()">
+<body onload="initPage()">
 
+  <!-- 首頁 -->
   <div id="homePage" class="page">
     <img src="logo.png" width="80" class="animated" />
     <h1>年貨團購「馬」上開跑囉！</h1>
     <p>一起揪團買年貨，美食享受過馬年，團主樂得笑開懷！！</p>
-    <button onclick="showPage('orderPage')">🛍️ 開始訂購</button>
-    <button onclick="showPage('queryPage')">🔎 查看我的訂單</button>
+    <div class="button-group">
+      <button onclick="showPage('orderPage')">🛍️ 開始訂購</button>
+      <button onclick="showPage('queryPage')">🔎 查看我的訂單</button>
+    </div>
   </div>
 
+  <!-- 訂單頁 -->
   <div id="orderPage" class="page hidden">
-    <h2>🛒 填寫訂單</h2>
+    <div class="header">
+      <h2>🛒 填寫訂單</h2>
+      <div id="cartIcon" onclick="toggleCart()">🛒</div>
+    </div>
+
     <form id="orderForm">
+      <label for="name">姓名：</label>
       <input type="text" id="name" placeholder="您的姓名" required>
+
+      <label for="vendor">商家：</label>
       <select id="vendor" required></select>
+
+      <label for="item">商品名稱：</label>
       <select id="item" required></select>
+
+      <label for="qty">數量：</label>
       <input type="number" id="qty" placeholder="數量" min="1" value="1" required>
-      <button type="submit">送出訂單</button>
-      <button type="button" onclick="showPage('homePage')">🏠 返回首頁</button>
+
+      <div class="button-group">
+        <button type="submit">送出訂單</button>
+        <button type="button" onclick="showPage('homePage')">🏠 返回首頁</button>
+      </div>
     </form>
   </div>
 
+  <!-- 購物車側欄 -->
+  <div id="cartPanel" class="hidden">
+    <h3>🛒 購物清單</h3>
+    <ul id="cartList"></ul>
+    <button onclick="submitCart()">送出全部訂單</button>
+    <button onclick="toggleCart()">關閉</button>
+  </div>
+
+  <!-- 查詢頁 -->
   <div id="queryPage" class="page hidden">
     <h2>🔎 查詢我的訂單</h2>
     <input type="text" id="queryName" placeholder="輸入姓名查詢">
