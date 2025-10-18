@@ -5,16 +5,16 @@ let redPacketTimer;
 function startRedPackets() {
   stopRedPackets();
   redPacketTimer = setInterval(() => {
-    for (let i = 0; i < 6; i++) {
-      const rp = document.createElement('div');
-      rp.className = 'redpacket';
-      rp.style.left = Math.random() * 100 + 'vw';
-      rp.style.animationDuration = 5 + Math.random() * 4 + 's';
-      rp.style.animationDelay = Math.random() * 2 + 's';
+    for (let i = 0; i < 3; i++) {  // 一次掉 3 個即可
+      const rp = document.createElement("div");
+      rp.className = "redpacket";
+      rp.style.left = Math.random() * 100 + "vw";
+      rp.style.animationDuration = 6 + Math.random() * 3 + "s"; // 掉得慢一點
+      rp.style.animationDelay = Math.random() * 2 + "s";
       document.body.appendChild(rp);
-      setTimeout(() => rp.remove(), 9000);
+      setTimeout(() => rp.remove(), 10000);
     }
-  }, 1200);
+  }, 1500);
 }
 
 function stopRedPackets() {
@@ -23,9 +23,10 @@ function stopRedPackets() {
 }
 
 // 顯示分頁
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById(pageId).style.display = 'block';
+  window.scrollTo(0, 0);
 }
 
 // 讀取產品
