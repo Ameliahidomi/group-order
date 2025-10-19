@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>年貨團購系統</title>
+<title>年貨團購系統 v3</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
   body {
@@ -14,6 +14,22 @@
     min-height: 100vh;
     margin: 0;
     overflow-x: hidden;
+    position: relative;
+  }
+
+  /* 加上背景淡化效果 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.4);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container, .redpacket {
+    position: relative;
+    z-index: 1;
   }
 
   .container {
@@ -115,6 +131,22 @@
     }
   }
 
+  /* 訂單頁背景與淡化 */
+  #orderPage {
+    background: url('order-bg.png') no-repeat center center/cover;
+    background-attachment: fixed;
+    position: relative;
+  }
+  #orderPage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.6);
+    pointer-events: none;
+    z-index: 0;
+  }
+  #orderPage * { position: relative; z-index: 1; }
+
   #orderPage h2 {
     color: #b50000;
     font-weight: 900;
@@ -136,22 +168,14 @@
   <!-- 訂購頁 -->
   <div class="container hidden" id="orderPage">
     <h2>🛒 填寫訂單</h2>
-
     <label>訂購人姓名：</label>
     <input type="text" id="buyerName" placeholder="請輸入您的姓名">
-
     <label>商家：</label>
     <select id="merchant"></select>
-
-    <label>商品分類：</label>
-    <select id="category"></select>
-
     <label>商品：</label>
     <select id="product"></select>
-
     <label>數量：</label>
     <input type="number" id="qty" value="1" min="1">
-
     <button onclick="previewOrder()">送出訂單</button>
     <button onclick="showPage('homePage')">🏠 返回首頁</button>
     <p id="msg"></p>
@@ -161,42 +185,31 @@
   <div class="container hidden" id="queryPage">
     <h2>🔍 查詢我的訂單</h2>
     <label>輸入訂購人姓名：</label>
-    <input type="text" id="queryName" placeholder="請輸入您的姓名（僅限中文）">
+    <input type="text" id="queryName" placeholder="請輸入您的姓名">
     <button onclick="searchOrders()">查詢</button>
     <button onclick="showPage('homePage')">🏠 返回首頁</button>
     <div id="orderList"></div>
   </div>
 
-  <!-- 訂單確認視窗 -->
-  <div id="confirmModal" class="hidden">
-    <div class="container" style="max-width:400px;">
-      <h3>請確認您的訂單</h3>
-      <div id="orderSummary"></div>
-      <button onclick="confirmSubmit()">確定送出</button>
-      <button onclick="closeModal()">取消</button>
-    </div>
-  </div>
-
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-ziwy8-pxgTxJiGwLahme9bmrq4YjetLutH-Gy8XhuwZUXC7MLkGFqCMvw4Zjl-o9/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzU4Nbezh-QRxgf8opzwzQU2FotsjITXdrkOMYFVn_FabSP6CAad6PuJJeDYV9J4lv3/exec";
 let allProducts = [];
-let tempOrder = null;
 let redPacketTimer = null;
 
-// 🧧 紅包飄落
+/* 🧧 紅包飄落 */
 function startRedPackets() {
   stopRedPackets();
   redPacketTimer = setInterval(() => {
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 3; i++) {
       const rp = document.createElement("div");
       rp.className = "redpacket";
       rp.style.left = Math.random() * 100 + "vw";
-      rp.style.animationDuration = 5 + Math.random() * 4 + "s";
+      rp.style.animationDuration = 6 + Math.random() * 3 + "s";
       rp.style.animationDelay = Math.random() * 2 + "s";
       document.body.appendChild(rp);
-      setTimeout(() => rp.remove(), 9000);
+      setTimeout(() => rp.remove(), 10000);
     }
-  }, 1200);
+  }, 1500);
 }
 
 function stopRedPackets() {
@@ -204,7 +217,7 @@ function stopRedPackets() {
   document.querySelectorAll('.redpacket').forEach(e => e.remove());
 }
 
-// 頁面切換
+/* 分頁切換 */
 function showPage(id){
   document.querySelectorAll('.container').forEach(e=>e.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
@@ -214,6 +227,7 @@ function showPage(id){
   if(id==='orderPage' && !allProducts.length){ preloadData(); }
 }
 
+/* 訊息提示 */
 function showMsg(txt){
   const el=document.getElementById('msg');
   el.textContent=txt;
@@ -221,13 +235,22 @@ function showMsg(txt){
   setTimeout(()=>el.style.opacity=0,3000);
 }
 
-// 載入商品資料
+/* 載入商品資料 */
 function preloadData(){
   fetch(`${WEB_APP_URL}?action=getProducts`)
   .then(res => res.json())
   .then(data => {
     allProducts = data;
-    fillMerchants();
+    const vendorSel = document.getElementById('merchant');
+    const itemSel = document.getElementById('product');
+    const vendors = [...new Set(data.map(p => p[0]))];
+    vendorSel.innerHTML = '<option value="">請選擇商家</option>' +
+      vendors.map(v => `<option value="${v}">${v}</option>`).join('');
+    vendorSel.onchange = () => {
+      const items = data.filter(p => p[0] === vendorSel.value);
+      itemSel.innerHTML = '<option value="">請選擇商品</option>' +
+        items.map(i => `<option value="${i[1]}" data-price="${i[2]}">${i[1]}（$${i[2]}）</option>`).join('');
+    };
   })
   .catch(err => {
     console.error(err);
@@ -235,71 +258,24 @@ function preloadData(){
   });
 }
 
-function fillMerchants(){
-  const merchants=[...new Set(allProducts.map(p=>p.merchant))];
-  const m=document.getElementById('merchant');
-  m.innerHTML='<option value="">請選擇商家</option>'+merchants.map(x=>`<option>${x}</option>`).join('');
-  m.onchange=()=>fillCategories(m.value);
-}
-
-function fillCategories(merchant){
-  const cats=[...new Set(allProducts.filter(p=>p.merchant===merchant).map(p=>p.category))];
-  const c=document.getElementById('category');
-  c.innerHTML='<option value="">請選擇分類</option>'+cats.map(x=>`<option>${x}</option>`).join('');
-  c.onchange=()=>fillProducts(merchant,c.value);
-}
-
-function fillProducts(merchant,cat){
-  const ps=allProducts.filter(p=>p.merchant===merchant && p.category===cat);
-  const p=document.getElementById('product');
-  p.innerHTML='<option value="">請選擇商品</option>'+ps.map(x=>`<option>${x.product} - $${x.price}</option>`).join('');
-}
-
-// 預覽與送出
+/* 預覽與送出訂單 */
 function previewOrder(){
   const buyer=document.getElementById('buyerName').value.trim();
   const merchant=document.getElementById('merchant').value;
-  const cat=document.getElementById('category').value;
-  const product=document.getElementById('product').value;
+  const itemEl=document.getElementById('product');
+  const item=itemEl.value;
+  const price=itemEl.selectedOptions[0]?.dataset.price||0;
   const qty=Number(document.getElementById('qty').value);
-
-  if (!/^[\u4e00-\u9fa5a-zA-Z]+$/.test(buyer)) {
-    showMsg('⚠️ 請輸入有效姓名（中文或英文）');
-    return;
-  }
-  if(!buyer||!merchant||!cat||!product||!qty){showMsg('⚠️ 請完整填寫');return;}
-
-  const price=Number(product.split('$')[1]);
-  const total=price*qty;
-  tempOrder={buyerName:buyer,merchant,category:cat,product,price,qty,total};
-  document.getElementById('orderSummary').innerHTML=
-    `<p>訂購人：${buyer}</p><p>商家：${merchant}</p><p>分類：${cat}</p><p>商品：${product}</p><p>數量：${qty}</p><p>總金額：$${total}</p>`;
-  document.getElementById('confirmModal').classList.remove('hidden');
+  if(!buyer||!merchant||!item||!qty){showMsg('⚠️ 請完整填寫');return;}
+  const order={action:'addOrder',name:buyer,vendor:merchant,item:item,qty:qty,price:price};
+  fetch(WEB_APP_URL,{method:'POST',body:JSON.stringify(order)})
+  .then(r=>r.json()).then(res=>{
+    if(res.status==='ok'||res.status==='success'){showMsg('✅ 訂單已送出成功！');}
+    else{alert('⚠️ 訂單送出失敗');}
+  }).catch(err=>{alert('⚠️ 傳送發生錯誤');console.error(err);});
 }
 
-function closeModal(){document.getElementById('confirmModal').classList.add('hidden');}
-
-function confirmSubmit(){
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(tempOrder)
-  })
-  .then(r => r.json())
-  .then(res => {
-    if (res.status === "success") {
-      showMsg('✅ 訂單已送出成功！感謝您的訂購 🙏');
-      closeModal();
-    } else {
-      alert("⚠️ 訂單送出失敗：" + res.message);
-    }
-  })
-  .catch(err => {
-    alert("⚠️ 傳送發生錯誤：" + err.message);
-  });
-}
-
-// 查詢訂單
+/* 查詢訂單 */
 function searchOrders(){
   const name=document.getElementById('queryName').value.trim();
   if(!name){alert('請輸入姓名');return;}
@@ -308,19 +284,13 @@ function searchOrders(){
   .then(data=>{
     const list=document.getElementById('orderList');
     if(!data.length){list.innerHTML='<p>查無訂單。</p>';return;}
-    let html='<table><tr><th>日期</th><th>商家</th><th>商品</th><th>數量</th><th>小計</th></tr>';
-    data.forEach(o=>{
-      html+=`<tr><td>${o.date}</td><td>${o.merchant}</td><td>${o.product}</td><td>${o.qty}</td><td>$${o.total}</td></tr>`;
-    });
+    let html='<table><tr><th>商家</th><th>商品</th><th>數量</th><th>金額</th><th>時間</th></tr>';
+    data.forEach(o=>{html+=`<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>${o.price}</td><td>${o.time}</td></tr>`;});
     list.innerHTML=html+'</table>';
   })
-  .catch(err=>{
-    console.error(err);
-    alert("⚠️ 查詢失敗。");
-  });
+  .catch(err=>{console.error(err);alert('⚠️ 查詢失敗');});
 }
 
-// 首頁啟動紅包
 window.addEventListener('DOMContentLoaded', startRedPackets);
 </script>
 </body>
