@@ -2,12 +2,12 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>年貨團購系統 v3</title>
+<title>年貨團購系統 v4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
   body {
     font-family: "Noto Sans TC", sans-serif;
-    background: url('background.png') no-repeat center center/cover;
+    background: url('background.jpg') no-repeat center center/cover;
     background-attachment: fixed;
     color: #fff;
     text-align: center;
@@ -16,8 +16,6 @@
     overflow-x: hidden;
     position: relative;
   }
-
-  /* 加上背景淡化效果 */
   body::before {
     content: "";
     position: fixed;
@@ -26,177 +24,58 @@
     pointer-events: none;
     z-index: 0;
   }
-
-  .container, .redpacket {
-    position: relative;
-    z-index: 1;
-  }
-
+  .container, .redpacket { position: relative; z-index: 1; }
   .container {
     padding: 25px 35px;
     width: 95%;
     max-width: 500px;
     margin: 60px auto;
   }
-
-  h1 {
-    color: #b50000;
-    font-weight: 900;
-    font-size: 2rem;
-    text-shadow: 2px 2px 4px #fff, -2px -2px 4px #fff, 0 0 8px rgba(255,255,255,0.5);
-    margin-bottom: 0.3em;
-  }
-
-  p {
-    color: #660000;
-    font-weight: 600;
-    text-shadow: 1px 1px 3px rgba(255,255,255,0.5);
-    font-size: 1.1rem;
-    margin-top: 0;
-    margin-bottom: 1em;
-  }
-
-  label {
-    display: block;
-    text-align: left;
-    font-weight: 600;
-    margin-top: 12px;
-  }
-
-  select, input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-  }
-
-  button {
-    background: linear-gradient(45deg,#d12,#f93);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-size: 16px;
-    margin-top: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
+  h1 { color: #b50000; font-weight: 900; font-size: 2rem; text-shadow: 2px 2px 4px #fff, -2px -2px 4px #fff, 0 0 8px rgba(255,255,255,0.5); margin-bottom: 0.3em; }
+  p { color: #660000; font-weight: 600; text-shadow: 1px 1px 3px rgba(255,255,255,0.5); font-size: 1.1rem; margin-top: 0; margin-bottom: 1em; }
+  label { display: block; text-align: left; font-weight: 600; margin-top: 12px; }
+  select, input { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+  button { background: linear-gradient(45deg,#d12,#f93); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; transition: all 0.3s ease; }
   button:hover { transform: scale(1.05); }
-
-  #msg {
-    color: #fff;
-    font-weight: bold;
-    margin-top: 15px;
-    opacity: 0;
-    transition: opacity 1s;
-  }
-
+  #msg { color: #fff; font-weight: bold; margin-top: 15px; opacity: 0; transition: opacity 1s; }
   .hidden { display:none; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    color: #fff;
-  }
-
-  th, td {
-    border: 1px solid rgba(255,255,255,0.4);
-    padding: 8px;
-  }
-
-  th {
-    background: rgba(255,255,255,0.2);
-  }
-
-  /* 紅包飄落 */
-  .redpacket {
-    position: fixed;
-    top: -50px;
-    width: 35px;
-    height: 40px;
-    background-image: url('redpacket.png');
-    background-size: cover;
-    animation: fall linear forwards;
-    pointer-events: none;
-  }
-
-  @keyframes fall {
-    to {
-      transform: translateY(110vh) rotate(360deg);
-      opacity: 0.8;
-    }
-  }
-
-  /* 訂單頁背景與淡化 */
-  #orderPage {
-    background: url('order-bg.png') no-repeat center center/cover;
-    background-attachment: fixed;
-    position: relative;
-  }
-  #orderPage::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.6);
-    pointer-events: none;
-    z-index: 0;
-  }
-  #orderPage * { position: relative; z-index: 1; }
-
-  #orderPage h2 {
-    color: #b50000;
-    font-weight: 900;
-    text-shadow: 1px 1px 3px rgba(255,255,255,0.6);
-  }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; color: #fff; }
+  th, td { border: 1px solid rgba(255,255,255,0.4); padding: 8px; }
+  th { background: rgba(255,255,255,0.2); }
+  .redpacket { position: fixed; top: -50px; width: 35px; height: 40px; background-image: url('redpacket.png'); background-size: cover; animation: fall linear forwards; pointer-events: none; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0.8; } }
+  #orderPage, #queryPage { background: url('order-bg.png') no-repeat center center/cover; background-attachment: fixed; position: relative; color: #400000; }
+  #orderPage::before, #queryPage::before { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,0.6); pointer-events: none; z-index: 0; }
+  #orderPage *, #queryPage * { position: relative; z-index: 1; }
+  #orderPage h2, #queryPage h2 { color: #a00000; font-weight: 900; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
 </style>
 </head>
-
 <body>
-  <!-- 首頁 -->
-  <div class="container" id="homePage">
-    <img src="logo.png" width="80" class="animated" />
-    <h1>年貨團購「馬」上開跑囉！</h1>
-    <p>一起揪團買年貨，美食享受過馬年，團主樂得笑開懷！！</p>
-    <button onclick="showPage('orderPage')">🛍️ 開始訂購</button>
-    <button onclick="showPage('queryPage')">🔎 查看我的訂單</button>
-  </div>
-
-  <!-- 訂購頁 -->
-  <div class="container hidden" id="orderPage">
-    <h2>🛒 填寫訂單</h2>
-    <label>訂購人姓名：</label>
-    <input type="text" id="buyerName" placeholder="請輸入您的姓名">
-    <label>商家：</label>
-    <select id="merchant"></select>
-    <label>商品：</label>
-    <select id="product"></select>
-    <label>數量：</label>
-    <input type="number" id="qty" value="1" min="1">
-    <button onclick="previewOrder()">送出訂單</button>
-    <button onclick="showPage('homePage')">🏠 返回首頁</button>
-    <p id="msg"></p>
-  </div>
-
-  <!-- 查詢頁 -->
-  <div class="container hidden" id="queryPage">
-    <h2>🔍 查詢我的訂單</h2>
-    <label>輸入訂購人姓名：</label>
-    <input type="text" id="queryName" placeholder="請輸入您的姓名">
-    <button onclick="searchOrders()">查詢</button>
-    <button onclick="showPage('homePage')">🏠 返回首頁</button>
-    <div id="orderList"></div>
-  </div>
-
+<div class="container" id="homePage">
+  <img src="logo.png" width="80" />
+  <h1>年貨團購「馬」上開跑囉！</h1>
+  <p>一起揪團買年貨，美食享受過馬年，團主樂得笑開懷！！</p>
+  <button onclick="showPage('orderPage')">🛍️ 開始訂購</button>
+  <button onclick="showPage('queryPage')">🔎 查看我的訂單</button>
+</div>
+<div class="container hidden" id="orderPage">
+  <h2>🛒 填寫訂單</h2>
+  <label>訂購人姓名：</label><input type="text" id="buyerName" placeholder="請輸入您的姓名">
+  <label>商家：</label><select id="merchant"></select>
+  <label>商品：</label><select id="product"></select>
+  <label>數量：</label><input type="number" id="qty" value="1" min="1">
+  <button onclick="previewOrder()">送出訂單</button><button onclick="showPage('homePage')">🏠 返回首頁</button><p id="msg"></p>
+</div>
+<div class="container hidden" id="queryPage">
+  <h2>🔍 查詢我的訂單</h2>
+  <label>輸入訂購人姓名：</label><input type="text" id="queryName" placeholder="請輸入您的姓名">
+  <button onclick="searchOrders()">查詢</button><button onclick="showPage('homePage')">🏠 返回首頁</button>
+  <div id="orderList"></div>
+</div>
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzU4Nbezh-QRxgf8opzwzQU2FotsjITXdrkOMYFVn_FabSP6CAad6PuJJeDYV9J4lv3/exec";
 let allProducts = [];
 let redPacketTimer = null;
-
-/* 🧧 紅包飄落 */
 function startRedPackets() {
   stopRedPackets();
   redPacketTimer = setInterval(() => {
@@ -211,54 +90,33 @@ function startRedPackets() {
     }
   }, 1500);
 }
-
 function stopRedPackets() {
   clearInterval(redPacketTimer);
   document.querySelectorAll('.redpacket').forEach(e => e.remove());
 }
-
-/* 分頁切換 */
 function showPage(id){
   document.querySelectorAll('.container').forEach(e=>e.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
-  if(id==='homePage'){ startRedPackets(); }
-  else{ stopRedPackets(); }
-
+  if(id==='homePage'){ startRedPackets(); } else { stopRedPackets(); }
   if(id==='orderPage' && !allProducts.length){ preloadData(); }
 }
-
-/* 訊息提示 */
-function showMsg(txt){
-  const el=document.getElementById('msg');
-  el.textContent=txt;
-  el.style.opacity=1;
-  setTimeout(()=>el.style.opacity=0,3000);
-}
-
-/* 載入商品資料 */
+function showMsg(txt){ const el=document.getElementById('msg'); el.textContent=txt; el.style.opacity=1; setTimeout(()=>el.style.opacity=0,3000); }
 function preloadData(){
   fetch(`${WEB_APP_URL}?action=getProducts`)
   .then(res => res.json())
   .then(data => {
+    if (!Array.isArray(data) || !data.length) { alert("⚠️ 無法載入商品資料，請稍後再試。"); return; }
     allProducts = data;
     const vendorSel = document.getElementById('merchant');
     const itemSel = document.getElementById('product');
     const vendors = [...new Set(data.map(p => p[0]))];
-    vendorSel.innerHTML = '<option value="">請選擇商家</option>' +
-      vendors.map(v => `<option value="${v}">${v}</option>`).join('');
+    vendorSel.innerHTML = '<option value="">請選擇商家</option>' + vendors.map(v => `<option value="${v}">${v}</option>`).join('');
     vendorSel.onchange = () => {
       const items = data.filter(p => p[0] === vendorSel.value);
-      itemSel.innerHTML = '<option value="">請選擇商品</option>' +
-        items.map(i => `<option value="${i[1]}" data-price="${i[2]}">${i[1]}（$${i[2]}）</option>`).join('');
+      itemSel.innerHTML = '<option value="">請選擇商品</option>' + items.map(i => `<option value="${i[1]}" data-price="${i[2]}">${i[1]}（$${i[2]}）</option>`).join('');
     };
-  })
-  .catch(err => {
-    console.error(err);
-    alert("⚠️ 無法載入商品資料，請稍後再試。");
-  });
+  }).catch(err => { console.error(err); alert("⚠️ 無法載入商品資料，請稍後再試。"); });
 }
-
-/* 預覽與送出訂單 */
 function previewOrder(){
   const buyer=document.getElementById('buyerName').value.trim();
   const merchant=document.getElementById('merchant').value;
@@ -269,28 +127,21 @@ function previewOrder(){
   if(!buyer||!merchant||!item||!qty){showMsg('⚠️ 請完整填寫');return;}
   const order={action:'addOrder',name:buyer,vendor:merchant,item:item,qty:qty,price:price};
   fetch(WEB_APP_URL,{method:'POST',body:JSON.stringify(order)})
-  .then(r=>r.json()).then(res=>{
-    if(res.status==='ok'||res.status==='success'){showMsg('✅ 訂單已送出成功！');}
-    else{alert('⚠️ 訂單送出失敗');}
-  }).catch(err=>{alert('⚠️ 傳送發生錯誤');console.error(err);});
+  .then(r=>r.json()).then(res=>{if(res.status==='ok'||res.status==='success'){showMsg('✅ 訂單已送出成功！');}else{alert('⚠️ 訂單送出失敗');}})
+  .catch(err=>{alert('⚠️ 傳送發生錯誤');console.error(err);});
 }
-
-/* 查詢訂單 */
 function searchOrders(){
   const name=document.getElementById('queryName').value.trim();
   if(!name){alert('請輸入姓名');return;}
   fetch(`${WEB_APP_URL}?action=getOrders&name=${encodeURIComponent(name)}`)
-  .then(r=>r.json())
-  .then(data=>{
+  .then(r=>r.json()).then(data=>{
     const list=document.getElementById('orderList');
     if(!data.length){list.innerHTML='<p>查無訂單。</p>';return;}
     let html='<table><tr><th>商家</th><th>商品</th><th>數量</th><th>金額</th><th>時間</th></tr>';
     data.forEach(o=>{html+=`<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>${o.price}</td><td>${o.time}</td></tr>`;});
     list.innerHTML=html+'</table>';
-  })
-  .catch(err=>{console.error(err);alert('⚠️ 查詢失敗');});
+  }).catch(err=>{console.error(err);alert('⚠️ 查詢失敗');});
 }
-
 window.addEventListener('DOMContentLoaded', startRedPackets);
 </script>
 </body>
