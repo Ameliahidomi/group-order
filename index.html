@@ -70,9 +70,17 @@
     animation: fall linear forwards;
     pointer-events: none;
   }
-  @keyframes fall {
-    to { transform: translateY(110vh) rotate(360deg); opacity: 0.8; }
-  }
+
+/* 🔧 首頁 Logo 上下浮動動畫 */
+#homePage img {
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
 
   /* 購物車 */
   #cartIcon {
@@ -132,12 +140,12 @@
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(255,245,230,0.8);
+    background: rgba(255,245,230,0.2);
     z-index: -1;
   }
 .form-grid {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 100px 1fr;
   gap: 10px 15px;
   align-items: center;
 }
