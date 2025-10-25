@@ -19,10 +19,9 @@
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.4);
     z-index: -1;
   }
-
   .container {
     padding: 25px 35px;
     width: 95%;
@@ -75,7 +74,7 @@
     to { transform: translateY(110vh) rotate(360deg); opacity: 0.8; }
   }
 
-  /* 🔧 購物車 */
+  /* 購物車 */
   #cartIcon {
     position: fixed;
     top: 15px;
@@ -95,10 +94,8 @@
   }
   #cartPanel {
     position: fixed;
-    top: 0;
-    right: -320px;
-    width: 300px;
-    height: 100%;
+    top: 0; right: -320px;
+    width: 300px; height: 100%;
     background: rgba(255,255,255,0.95);
     color: #000;
     box-shadow: -2px 0 10px rgba(0,0,0,0.4);
@@ -125,17 +122,18 @@
 
   /* 填寫訂單頁面 */
   #orderPage {
-    background: #fff9e6;
+    background: #fff8e7;
     border-radius: 15px;
     padding: 25px;
     color: #222;
   }
-    #orderPage {
-    background: #fff9e6; /* 淡黃色 */
-    border-radius: 15px;
-    padding: 25px;
-    color: #222;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  #orderPage::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,245,230,0.8);
+    z-index: -1;
   }
 .form-grid {
   display: grid;
@@ -148,11 +146,74 @@
   color: #b50000;
   font-weight: bold;
 }
+
+/* 查詢訂單頁面標題與欄位排版 */
+#queryPage h2 {
+  color: #b50000;
+  text-align: left;
+  margin-bottom: 10px;
+}
+#queryPage label {
+  display: inline-block;
+  width: 130px;
+  font-weight: bold;
+  color: #b50000;
+  text-align: right;
+  margin-right: 10px;
+}
+#queryPage input {
+  width: calc(100% - 150px);
+  display: inline-block;
+}
+
+/* 🔧 購物車滑出遮罩 */
+#cartOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 999;
+}
+#cartOverlay.active {
+  display: block;
+}
+
+/* 🔧 查詢訂單結果顯示樣式 */
+#orderList {
+  margin-top: 15px;
+  color: #b50000;
+  font-weight: 600;
+}
+#orderList table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff9e6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#orderList th {
+  background: #ffe2b3;
+  color: #b50000;
+  padding: 8px;
+}
+#orderList td {
+  border-top: 1px solid #f5d6a4;
+  padding: 8px;
+  color: #333;
+}
+#orderList p {
+  color: #b50000;
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
 <div class="overlay"></div>
 <div id="cartIcon" onclick="toggleCart()">🛒<div id="cartCount">0</div></div>
+<div id="cartOverlay" onclick="toggleCart()"></div>
 <div id="cartPanel">
   <h3>購物車清單</h3>
   <div id="cartList"></div>
@@ -171,12 +232,12 @@
 <!-- 訂單頁 -->
 <div class="container hidden" id="orderPage">
   <h2>🛒 填寫訂單</h2>
-<form id="orderForm" class="form-grid">
-  <label>姓名：</label><input type="text" id="buyerName">
-  <label>商家：</label><select id="merchant"></select>
-  <label>商品：</label><select id="product"></select>
-  <label>數量：</label><input type="number" id="qty" value="1" min="1">
-</form>
+  <form id="orderForm" class="form-grid">
+    <label>訂購人姓名：</label><input type="text" id="buyerName">
+    <label>商家：</label><select id="merchant"></select>
+    <label>商品：</label><select id="product"></select>
+    <label>數量：</label><input type="number" id="qty" value="1" min="1">
+  </form>
   <button onclick="addToCart()">加入購物車</button>
   <button onclick="showPage('homePage')">🏠 返回首頁</button>
   <p id="msg"></p>
@@ -193,7 +254,7 @@
 </div>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTOQKnpZhQEnvtJJ-DQhZz0pYp27RjWwrx3kTMtvzwm5v4N9Ty2LJ-iYnId20fgL-g/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx6AzlTflic_WdbZjWuLXmzWDrN3_2Zp3XJlJOYRyrOCRg-NuQl_fKsX7g0dFdDUdWB/exec";
 let allProducts = [];
 let cart = [];
 let redPacketTimer;
@@ -251,10 +312,15 @@ function addToCart(){
   document.getElementById('cartCount').textContent=cart.length;
   alert('✅ 已加入購物車！');
 }
+
 function toggleCart(){
-  document.getElementById('cartPanel').classList.toggle('active');
-  renderCart();
+  const panel = document.getElementById('cartPanel');
+  const overlay = document.getElementById('cartOverlay');
+  const isActive = panel.classList.toggle('active');
+  overlay.classList.toggle('active', isActive);
+  if (isActive) renderCart();
 }
+
 function renderCart(){
   const div=document.getElementById('cartList');
   if(!cart.length){div.innerHTML='<p>購物車是空的。</p>';return;}
@@ -269,29 +335,37 @@ function delItem(i){
   document.getElementById('cartCount').textContent=cart.length;
   renderCart();
 }
-
-/* 🔧 修正版送出訂單 */
 function submitCart(){
   if(!cart.length){alert('購物車是空的');return;}
   if(!confirm('確定要送出這些訂單嗎？'))return;
 
   Promise.all(cart.map(c=>{
     const formData = new FormData();
-    formData.append('action','addOrder');
-    formData.append('name',c.buyer);
-    formData.append('vendor',c.vendor);
-    formData.append('item',c.item);
-    formData.append('qty',c.qty);
-    formData.append('price',c.price);
+    formData.append('action', 'addOrder');
+    formData.append('name', c.buyer);
+    formData.append('vendor', c.vendor);
+    formData.append('item', c.item);
+    formData.append('qty', c.qty);
+    formData.append('price', c.price);
 
-    return fetch(WEB_APP_URL,{ method:'POST', body: formData }).then(r=>r.json());
+    return fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: formData,
+      mode: 'cors',
+    })
+    .then(async (r) => {
+      const text = await r.text();
+      try { return JSON.parse(text); } catch { return text; }
+    });
   }))
   .then(()=>{
     alert('✅ 訂單已送出成功！');
-    cart=[];document.getElementById('cartCount').textContent=0;toggleCart();
+    cart = [];
+    document.getElementById('cartCount').textContent = 0;
+    toggleCart();
   })
   .catch(err=>{
-    alert('❌ 訂單送出失敗: '+err);
+    alert('❌ 訂單送出失敗：' + err.message + '\n請確認 Apps Script 已部署為「任何人皆可存取」');
   });
 }
 
