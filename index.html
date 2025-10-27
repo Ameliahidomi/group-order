@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>年貨團購系統</title>
+<title>年貨團購系統 v4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
   body {
@@ -33,12 +33,7 @@
     font-weight: 900;
     text-shadow: 2px 2px 4px #fff, -2px -2px 4px #fff, 0 0 8px rgba(255,255,255,0.5);
   }
-  p {
-    color: #660000;
-    font-weight: 600;
-    text-shadow: 1px 1px 3px rgba(255,255,255,0.5);
-    font-size: 1.1rem;
-  }
+  p { color: #660000; font-weight: 600; font-size: 1.1rem; }
   select, input {
     width: 100%;
     padding: 10px;
@@ -60,59 +55,38 @@
   button:hover { transform: scale(1.05); }
   .hidden { display:none; }
 
-  /* 紅包 */
+  /* Logo 漂浮動畫 */
+  #homePage img { animation: floatLogo 3s ease-in-out infinite; }
+  @keyframes floatLogo { 0%{transform:translateY(0);} 50%{transform:translateY(-8px);} 100%{transform:translateY(0);} }
+
+  /* 紅包動畫 */
   .redpacket {
-    position: fixed;
-    top: -50px;
+    position: fixed; top: -50px;
     width: 35px; height: 40px;
     background-image: url('redpacket.png');
     background-size: cover;
     animation: fall linear forwards;
     pointer-events: none;
   }
-
-/* 🔧 首頁 Logo 上下浮動動畫 */
-#homePage img {
-  animation: floatLogo 3s ease-in-out infinite;
-}
-
-@keyframes floatLogo {
-  0%   { transform: translateY(0px); }
-  50%  { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
-}
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0.8; } }
 
   /* 購物車 */
-  #cartIcon {
-    position: fixed;
-    top: 15px;
-    right: 20px;
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 30;
-  }
+  #cartIcon { position: fixed; top: 15px; right: 20px; font-size: 1.8rem; cursor: pointer; z-index: 30; }
   #cartCount {
-    position: absolute;
-    top: 5px; right: 5px;
+    position: absolute; top: 5px; right: 5px;
     background: #fff; color: #b50000;
-    border-radius: 50%;
-    width: 18px; height: 18px;
-    font-size: 12px;
-    line-height: 18px; text-align: center;
+    border-radius: 50%; width: 18px; height: 18px;
+    font-size: 12px; line-height: 18px; text-align: center;
   }
   #cartPanel {
-    position: fixed;
-    top: 0; right: -320px;
+    position: fixed; top: 0; right: -320px;
     width: 300px; height: 100%;
     background: rgba(255,255,255,0.95);
-    color: #000;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.4);
-    transition: right 0.4s ease;
-    padding: 20px;
-    overflow-y: auto;
-    z-index: 1000;
+    color: #000; box-shadow: -2px 0 10px rgba(0,0,0,0.4);
+    transition: right 0.4s ease; padding: 20px;
+    overflow-y: auto; z-index: 1000;
   }
-  #cartPanel.active { right: 0; }
+
 
   #cartPanel table {
     width: 100%;
@@ -126,96 +100,82 @@
     font-size: 14px;
     padding: 4px 6px;
     border-radius: 5px;
+}
+  #cartPanel.active { right: 0; }
+  #cartOverlay {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3); z-index: 999;
+  }
+  #cartOverlay.active { display: block; }
+
+  /* 自製彈窗 */
+  #popupMsg {
+    position: fixed; top: 40%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff; color: #b50000;
+    border-radius: 15px; padding: 25px 40px;
+    font-size: 1.2rem; font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: none; z-index: 2000;
   }
 
-  /* 填寫訂單頁面 */
+  /* 填寫訂單頁背景與排版 */
   #orderPage {
-    background: #fff8e7;
-    border-radius: 15px;
-    padding: 25px;
-    color: #222;
+    position: relative; border-radius: 15px; padding: 30px;
+    color: #222; overflow: hidden;
+    background: rgba(255,248,231,0.95);
   }
   #orderPage::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
+    content: ""; position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(255,245,230,0.2);
-    z-index: -1;
+    background: url('order-bg.png') center/cover no-repeat;
+    opacity: 0.4; z-index: -1; border-radius: 15px;
+    transition: opacity 0.3s ease;
   }
-.form-grid {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 10px 15px;
-  align-items: center;
-}
-.form-grid label {
-  text-align: right;
-  color: #b50000;
-  font-weight: bold;
-}
+  @media (max-width: 1200px) { #orderPage::before { opacity: 0.35; } }
+  @media (max-width: 768px)  { #orderPage::before { opacity: 0.3; background: rgba(255,248,231,0.95); background-blend-mode: lighten; } }
 
-/* 查詢訂單頁面標題與欄位排版 */
-#queryPage h2 {
-  color: #b50000;
-  text-align: left;
-  margin-bottom: 10px;
-}
-#queryPage label {
-  display: inline-block;
-  width: 130px;
-  font-weight: bold;
-  color: #b50000;
-  text-align: right;
-  margin-right: 10px;
-}
-#queryPage input {
-  width: calc(100% - 150px);
-  display: inline-block;
-}
+  #orderForm.form-grid {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px 18px;
+    align-items: center;
+    margin-top: 10px;
+  }
+  #orderForm label {
+    text-align: right;
+    font-weight: bold;
+    color: #fff;
+    background: #b50000;
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-shadow: 1px 1px 2px #000;
+  }
+  @media (max-width: 600px) {
+    #orderForm.form-grid { grid-template-columns: 1fr; }
+    #orderForm label { text-align: left; }
+  }
 
-/* 🔧 購物車滑出遮罩 */
-#cartOverlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
-  z-index: 999;
-}
-#cartOverlay.active {
-  display: block;
-}
-
-/* 🔧 查詢訂單結果顯示樣式 */
-#orderList {
-  margin-top: 15px;
-  color: #b50000;
-  font-weight: 600;
-}
-#orderList table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff9e6;
-  border-radius: 10px;
-  overflow: hidden;
-}
-#orderList th {
-  background: #ffe2b3;
-  color: #b50000;
-  padding: 8px;
-}
-#orderList td {
-  border-top: 1px solid #f5d6a4;
-  padding: 8px;
-  color: #333;
-}
-#orderList p {
-  color: #b50000;
-  font-weight: bold;
-}
+  /* 查詢訂單頁 */
+  #queryPage .query-row {
+    display: flex; align-items: center; justify-content: flex-start;
+    gap: 10px; margin-bottom: 10px;
+  }
+  #queryPage label {
+    width: 150px; font-weight: bold; color: #b50000; text-align: right;
+  }
+  #queryPage input { flex: 1; min-width: 150px; }
+  #queryPage button { white-space: nowrap; }
+  #orderList table {
+    width: 100%; border-collapse: collapse; table-layout: fixed;
+    background: #fff9e6;
+  }
+  #orderList th, #orderList td {
+    text-align: center; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; padding: 8px; color: #333;
+  }
+  #orderList th { background: #ffe2b3; color: #b50000; }
 </style>
 </head>
 <body>
@@ -254,18 +214,28 @@
 <!-- 查詢頁 -->
 <div class="container hidden" id="queryPage">
   <h2>🔍 查詢我的訂單</h2>
-  <label>輸入訂購人姓名：</label>
-  <input type="text" id="queryName" placeholder="請輸入您的姓名">
-  <button onclick="searchOrders()">查詢</button>
+  <div class="query-row">
+    <label>輸入訂購人姓名：</label>
+    <input type="text" id="queryName" placeholder="請輸入您的姓名">
+    <button onclick="searchOrders()">查詢</button>
+  </div>
   <button onclick="showPage('homePage')">🏠 返回首頁</button>
   <div id="orderList"></div>
 </div>
+
+<div id="popupMsg"></div>
 
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx6AzlTflic_WdbZjWuLXmzWDrN3_2Zp3XJlJOYRyrOCRg-NuQl_fKsX7g0dFdDUdWB/exec";
 let allProducts = [];
 let cart = [];
 let redPacketTimer;
+
+function showPopup(text, duration=1800){
+  const pop=document.getElementById('popupMsg');
+  pop.textContent=text; pop.style.display='block';
+  setTimeout(()=>{pop.style.display='none';},duration);
+}
 
 function startRedPackets(){
   stopRedPackets();
@@ -284,19 +254,23 @@ function stopRedPackets(){
   clearInterval(redPacketTimer);
   document.querySelectorAll('.redpacket').forEach(e=>e.remove());
 }
+
 function showPage(id){
   document.querySelectorAll('.container').forEach(e=>e.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   if(id==='homePage'){startRedPackets();}
   else{stopRedPackets();}
-  if(id==='orderPage' && !allProducts.length){preloadData();}
 }
+
 function preloadData(){
+  const m=document.getElementById('merchant');
+  m.innerHTML='<option>讀取中...</option>';
   fetch(`${WEB_APP_URL}?action=getProducts`)
   .then(res=>res.json())
   .then(data=>{allProducts=data;fillMerchants();})
-  .catch(()=>alert("⚠️ 無法載入商品資料"));
+  .catch(()=>{m.innerHTML='<option>載入失敗</option>';showPopup("⚠️ 無法載入商品資料");});
 }
+
 function fillMerchants(){
   const merchants=[...new Set(allProducts.map(p=>p.vendor))];
   const m=document.getElementById('merchant');
@@ -315,20 +289,18 @@ function addToCart(){
   const item=prodSel.value;
   const price=Number(prodSel.selectedOptions[0]?.dataset.price||0);
   const qty=Number(document.getElementById('qty').value);
-  if(!buyer||!vendor||!item){alert('⚠️ 請完整填寫');return;}
+  if(!buyer||!vendor||!item){showPopup('⚠️ 請完整填寫');return;}
   cart.push({buyer,vendor,item,price,qty});
   document.getElementById('cartCount').textContent=cart.length;
-  alert('✅ 已加入購物車！');
+  showPopup('✅ 已加入購物車！');
 }
-
 function toggleCart(){
-  const panel = document.getElementById('cartPanel');
-  const overlay = document.getElementById('cartOverlay');
-  const isActive = panel.classList.toggle('active');
-  overlay.classList.toggle('active', isActive);
-  if (isActive) renderCart();
+  const panel=document.getElementById('cartPanel');
+  const overlay=document.getElementById('cartOverlay');
+  const isActive=panel.classList.toggle('active');
+  overlay.classList.toggle('active',isActive);
+  if(isActive)renderCart();
 }
-
 function renderCart(){
   const div=document.getElementById('cartList');
   if(!cart.length){div.innerHTML='<p>購物車是空的。</p>';return;}
@@ -338,58 +310,41 @@ function renderCart(){
   html+=`</table><p><b>總計：$${total}</b></p>`;
   div.innerHTML=html;
 }
-function delItem(i){
-  cart.splice(i,1);
-  document.getElementById('cartCount').textContent=cart.length;
-  renderCart();
-}
+function delItem(i){ cart.splice(i,1); document.getElementById('cartCount').textContent=cart.length; renderCart(); }
 function submitCart(){
-  if(!cart.length){alert('購物車是空的');return;}
-  if(!confirm('確定要送出這些訂單嗎？'))return;
-
+  if(!cart.length){showPopup('購物車是空的');return;}
+  if(!window.confirm('確定要送出這些訂單嗎？'))return;
   Promise.all(cart.map(c=>{
-    const formData = new FormData();
-    formData.append('action', 'addOrder');
-    formData.append('name', c.buyer);
-    formData.append('vendor', c.vendor);
-    formData.append('item', c.item);
-    formData.append('qty', c.qty);
-    formData.append('price', c.price);
-
-    return fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: formData,
-      mode: 'cors',
-    })
-    .then(async (r) => {
-      const text = await r.text();
-      try { return JSON.parse(text); } catch { return text; }
-    });
-  }))
-  .then(()=>{
-    alert('✅ 訂單已送出成功！');
-    cart = [];
-    document.getElementById('cartCount').textContent = 0;
-    toggleCart();
-  })
-  .catch(err=>{
-    alert('❌ 訂單送出失敗：' + err.message + '\n請確認 Apps Script 已部署為「任何人皆可存取」');
-  });
+    const formData=new FormData();
+    formData.append('action','addOrder');
+    formData.append('name',c.buyer);
+    formData.append('vendor',c.vendor);
+    formData.append('item',c.item);
+    formData.append('qty',c.qty);
+    formData.append('price',c.price);
+    return fetch(WEB_APP_URL,{method:'POST',body:formData,mode:'cors'})
+      .then(async r=>{const t=await r.text();try{return JSON.parse(t);}catch{return t;}});
+  })).then(()=>{showPopup('✅ 訂單已送出成功！');cart=[];document.getElementById('cartCount').textContent=0;toggleCart();})
+  .catch(err=>{showPopup('❌ 訂單送出失敗：'+err.message);});
+document.getElementById('buyerName').value = '';
+document.getElementById('merchant').selectedIndex = 0;
+document.getElementById('product').innerHTML = '<option value="">請選擇商品</option>';
+document.getElementById('qty').value = 1;
 }
-
 function searchOrders(){
   const name=document.getElementById('queryName').value.trim();
-  if(!name){alert('請輸入姓名');return;}
+  if(!name){showPopup('請輸入姓名');return;}
   fetch(`${WEB_APP_URL}?action=getOrders&name=${encodeURIComponent(name)}`)
   .then(r=>r.json())
   .then(data=>{
     const list=document.getElementById('orderList');
     if(!data.length){list.innerHTML='<p>查無訂單。</p>';return;}
-    let html='<table><tr><th>日期</th><th>商家</th><th>商品</th><th>數量</th><th>金額</th></tr>';
-    data.forEach(o=>{html+=`<tr><td>${o.time}</td><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>$${o.price}</td></tr>`;});
+    let html='<table><tr><th>商家</th><th>商品</th><th>數量</th><th>金額</th></tr>';
+    data.forEach(o=>{html+=`<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>$${o.price}</td></tr>`;});
     list.innerHTML=html+'</table>';
   });
 }
-window.addEventListener('DOMContentLoaded', startRedPackets);
+window.addEventListener('DOMContentLoaded',()=>{startRedPackets();preloadData();});
 </script>
-</body></html>
+</body>
+</html>
