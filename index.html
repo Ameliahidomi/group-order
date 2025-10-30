@@ -238,27 +238,31 @@
   #queryPage input { flex: 1; min-width: 150px; }
   #queryPage button { white-space: nowrap; }
   #orderList table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    background: #fff9e6;
-  }
-  #orderList th, #orderList td {
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 8px;
-    color: #333;
-  }
-  #orderList th { background: #ffe2b3; color: #b50000; }
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  background: #fff9e6;
+}
+#orderList th, #orderList td {
+  text-align: center;
+  white-space: normal;
+  word-wrap: break-word;
+  padding: 10px 8px;
+  color: #333;
+  min-width: 80px;
+}
+#orderList th {
+  background: #ffe2b3;
+  color: #b50000;
+}
 </style>
 </head>
 <body>
 <div class="overlay"></div>
 <div id="cartIcon" onclick="toggleCart()">🛒<div id="cartCount">0</div></div>
 <div id="cartOverlay" onclick="toggleCart()"></div>
-<div id="cartPanel"><h3>購物車清單</h3><div id="cartList"></div><button onclick="submitCart()">送出訂單</button></div>
+<div id="cartPanel"><h3>購物車清單</h3>
+<div id="cartList"></div><button onclick="submitCart()">送出訂單</button></div>
 
 <div class="container" id="homePage">
   <img src="logo.png" width="80" />
@@ -313,8 +317,69 @@ function toggleCart(){const p=document.getElementById('cartPanel');const o=docum
 function renderCart(){const d=document.getElementById('cartList');if(!cart.length){d.innerHTML='<p>購物車是空的。</p>';return;}let html='<table><tr><th>商品</th><th>數量</th><th>小計</th><th></th></tr>';cart.forEach((c,i)=>{html+=`<tr><td>${c.item}</td><td>${c.qty}</td><td>$${c.price*c.qty}</td><td><button style="font-size:12px;padding:3px 6px;border-radius:4px;" onclick="delItem(${i})">❌</button></td></tr>`;});
 const total=cart.reduce((a,b)=>a+b.price*b.qty,0);html+=`</table><p><b>總計：$${total}</b></p>`;d.innerHTML=html;}
 function delItem(i){cart.splice(i,1);document.getElementById('cartCount').textContent=cart.length;renderCart();}
-async function submitCart(){if(!cart.length){showPopup('購物車是空的');return;}if(!window.confirm('確定要送出這些訂單嗎？'))return;for(let c of cart){const f=new FormData();f.append('action','addOrder');f.append('name',c.buyer);f.append('vendor',c.vendor);f.append('item',c.item);f.append('qty',c.qty);f.append('price',c.price);try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'cors'});}catch(e){console.error('送出失敗：',e);}}showPopup('✅ 訂單已送出成功！');cart=[];document.getElementById('cartCount').textContent=0;toggleCart();document.getElementById('buyerName').value='';document.getElementById('merchant').selectedIndex=0;document.getElementById('product').innerHTML='<option value="">請選擇商品</option>';document.getElementById('qty').value=1;}
-function searchOrders(){const name=document.getElementById('queryName').value.trim();if(!name){showPopup('請輸入姓名');return;}fetch(`${WEB_APP_URL}?action=getOrders&name=${encodeURIComponent(name)}`).then(r=>r.json()).then(d=>{const l=document.getElementById('orderList');if(!d.length){l.innerHTML='<p>查無訂單。</p>';return;}let html='<table><tr><th>商家</th><th>商品</th><th>數量</th><th>金額</th></tr>';d.forEach(o=>{html+=`<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>$${o.price}</td></tr>`;});l.innerHTML=html+'</table>';});}
+async function submitCart() {
+  if (!cart.length) { showPopup('購物車是空的'); return; }
+  if (!window.confirm('確定要送出這些訂單嗎？')) return;
+
+  const tasks = cart.map(c => {
+    const f = new FormData();
+    f.append('action', 'addOrder');
+    f.append('name', c.buyer);
+    f.append('vendor', c.vendor);
+    f.append('item', c.item);
+    f.append('qty', c.qty);
+    f.append('price', c.price);
+
+    // 每筆訂單加上重試機制
+    return fetch(WEB_APP_URL, { method: 'POST', body: f, mode: 'cors' })
+      .catch(err => {
+        console.warn('重試中...', err);
+        return fetch(WEB_APP_URL, { method: 'POST', body: f, mode: 'cors' });
+      });
+  });
+
+  try {
+    await Promise.all(tasks);
+    showPopup('✅ 所有訂單已成功送出！');
+    cart = [];
+    document.getElementById('cartCount').textContent = 0;
+    toggleCart();
+    document.getElementById('buyerName').value = '';
+    document.getElementById('merchant').selectedIndex = 0;
+    document.getElementById('product').innerHTML = '<option value="">請選擇商品</option>';
+    document.getElementById('qty').value = 1;
+  } catch (err) {
+    console.error('訂單送出發生錯誤：', err);
+    showPopup('⚠️ 部分訂單未成功送出，請稍後再試');
+  }
+}
+
+function searchOrders() {
+  const name = document.getElementById('queryName').value.trim();
+  if (!name) { showPopup('請輸入姓名'); return; }
+
+  fetch(`${WEB_APP_URL}?action=getOrders&name=${encodeURIComponent(name)}`)
+    .then(r => r.json())
+    .then(d => {
+      const l = document.getElementById('orderList');
+      if (!d.length) { l.innerHTML = '<p>查無訂單。</p>'; return; }
+
+      let total = 0;
+      let html = '<table><tr><th>商家</th><th>商品名稱</th><th>數量</th><th>金額</th></tr>';
+      d.forEach(o => {
+        const subtotal = Number(o.price) * Number(o.qty || 1);
+        total += subtotal;
+        html += `<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>$${subtotal}</td></tr>`;
+      });
+      html += `<tr style="font-weight:bold;background:#ffe2b3;color:#b50000;"><td colspan="3">合計</td><td>$${total}</td></tr>`;
+      html += '</table>';
+      l.innerHTML = html;
+    })
+    .catch(err => {
+      console.error('查詢錯誤：', err);
+      showPopup('⚠️ 查詢失敗，請稍後再試');
+    });
+}
 window.addEventListener('DOMContentLoaded',()=>{startRedPackets();preloadData();});
 </script>
 </body></html>
