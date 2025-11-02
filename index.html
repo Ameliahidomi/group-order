@@ -16,253 +16,122 @@
     overflow-x: hidden;
   }
   .overlay {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(255,255,255,0.4);
     z-index: -1;
   }
-  .container {
-    padding: 25px 35px;
-    width: 95%;
-    max-width: 500px;
-    margin: 60px auto;
-  }
+  .container { padding: 25px 35px; width: 95%; max-width: 500px; margin: 60px auto; }
   h1, h2 {
     color: #b50000;
     font-weight: 900;
     text-shadow: 2px 2px 4px #fff, -2px -2px 4px #fff, 0 0 8px rgba(255,255,255,0.5);
     white-space: nowrap;
   }
-  p {
-    color: #660000;
-    font-weight: 600;
-  }
+  p { color: #660000; font-weight: 600; }
   button {
     background: linear-gradient(45deg,#d12,#f93);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-block;
+    color: #fff; border: none; border-radius: 8px;
+    padding: 12px 20px; cursor: pointer;
+    transition: all 0.3s ease; display: inline-block;
   }
   button:hover { transform: scale(1.05); }
   select, input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
+    width: 100%; padding: 10px;
+    border: 1px solid #ccc; border-radius: 8px; font-size: 16px;
   }
   .hidden { display:none; }
 
-  /* 響應式字體與按鈕大小 */
-  @media (min-width: 1025px) {
-    h1 { font-size: 2.2rem; }
-    p { font-size: 1.2rem; }
-    button { font-size: 1rem; padding: 12px 24px; margin: 10px; }
-  }
-  @media (min-width: 601px) and (max-width: 1024px) {
-    h1 { font-size: 1.9rem; }
-    p { font-size: 1.05rem; }
-    button { font-size: 0.95rem; padding: 11px 22px; margin: 8px; }
-  }
-  @media (max-width: 600px) {
-    h1 { font-size: 1.6rem; }
-    p { font-size: 0.95rem; }
-    button { font-size: 0.9rem; padding: 14px 28px; margin: 14px 0; width: 80%; }
-  }
+  @media (min-width:1025px){ h1{font-size:2.2rem;} p{font-size:1.2rem;} button{font-size:1rem;padding:12px 24px;margin:10px;} }
+  @media (min-width:601px) and (max-width:1024px){ h1{font-size:1.9rem;} p{font-size:1.05rem;} button{font-size:0.95rem;padding:11px 22px;margin:8px;} }
+  @media (max-width:600px){ h1{font-size:1.6rem;} p{font-size:0.95rem;} button{font-size:0.9rem;padding:14px 28px;margin:14px 0;width:80%;} }
 
-  /* Logo 漂浮動畫 */
   #homePage img { animation: floatLogo 3s ease-in-out infinite; }
-  @keyframes floatLogo {
-    0%{transform:translateY(0);}
-    50%{transform:translateY(-8px);}
-    100%{transform:translateY(0);}
-  }
+  @keyframes floatLogo{0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);}}
 
-  /* 紅包動畫 */
   .redpacket {
-    position: fixed;
-    top: -50px;
-    width: 35px;
-    height: 40px;
-    background-image: url('redpacket.png');
-    background-size: cover;
-    animation: fall linear forwards;
-    pointer-events: none;
+    position: fixed; top: -50px;
+    width: 35px; height: 40px;
+    background-image: url('redpacket.png'); background-size: cover;
+    animation: fall linear forwards; pointer-events:none;
   }
-  @keyframes fall {
-    to { transform: translateY(110vh) rotate(360deg); opacity: 0.8; }
-  }
+  @keyframes fall { to{transform:translateY(110vh) rotate(360deg);opacity:0.8;} }
 
-  /* 購物車 */
   #cartIcon {
-    position: fixed;
-    top: 15px;
-    right: 20px;
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 30;
+    position: fixed; top: 15px; right: 20px;
+    font-size: 1.8rem; cursor: pointer; z-index: 30;
   }
   #cartCount {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #fff;
-    color: #b50000;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 12px;
-    line-height: 18px;
-    text-align: center;
+    position: absolute; top: 5px; right: 5px;
+    background: #fff; color: #b50000;
+    border-radius: 50%; width: 18px; height: 18px;
+    font-size: 12px; line-height: 18px; text-align: center;
   }
-
   #cartPanel {
-    position: fixed;
-    top: 0;
-    right: -320px;
-    width: 300px;
-    height: 100%;
-    background: rgba(255,255,255,0.95);
-    color: #000;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.4);
-    transition: right 0.4s ease;
-    padding: 20px;
-    overflow-y: auto;
-    z-index: 1000;
+    position: fixed; top: 0; right: -320px;
+    width: 300px; height: 100%;
+    background: rgba(255,255,255,0.95); color:#000;
+    box-shadow:-2px 0 10px rgba(0,0,0,0.4);
+    transition:right 0.4s ease; padding:20px; overflow-y:auto; z-index:1000;
   }
-  #cartPanel table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  #cartPanel th, #cartPanel td {
-    padding: 6px;
-    text-align: center;
-  }
-  #cartPanel table button {
-    font-size: 14px;
-    padding: 4px 6px;
-    border-radius: 5px;
-}
-
-  #cartPanel.active { right: 0; }
+  #cartPanel.active{ right:0; }
   #cartOverlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3);
-    z-index: 999;
+    display:none; position:fixed; top:0; left:0;
+    width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:999;
   }
-  #cartOverlay.active { display: block; }
-
-  /* 自製彈窗 */
+  #cartOverlay.active{ display:block; }
   #popupMsg {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    color: #b50000;
-    border-radius: 15px;
-    padding: 25px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    display: none;
-    z-index: 2000;
+    position:fixed; top:40%; left:50%; transform:translate(-50%,-50%);
+    background:#fff; color:#b50000; border-radius:15px; padding:25px 40px;
+    font-size:1.2rem; font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    display:none; z-index:2000;
   }
 
-  /* 填寫訂單頁背景與排版 */
-  #orderPage {
-    position: relative;
-    border-radius: 15px;
-    padding: 30px;
-    color: #222;
-    overflow: hidden;
-    background: rgba(255,248,231,0.95);
-  }
+  #orderPage { position:relative; border-radius:15px; padding:30px; color:#222;
+    background:rgba(255,248,231,0.95); overflow:hidden; }
   #orderPage::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: url('order-bg.png') center/cover no-repeat;
-    opacity: 0.4;
-    z-index: -1;
-    border-radius: 15px;
-    transition: opacity 0.3s ease;
+    content:""; position:absolute; top:0; left:0; width:100%; height:100%;
+    background:url('order-bg.png') center/cover no-repeat; opacity:0.4;
+    z-index:-1; border-radius:15px;
   }
-  @media (max-width: 1200px) { #orderPage::before { opacity: 0.35; } }
-  @media (max-width: 768px)  { #orderPage::before { opacity: 0.3; } }
-
   #orderForm.form-grid {
-    display: grid;
-    grid-template-columns: 130px 1fr;
-    gap: 12px 18px;
-    align-items: center;
-    margin-top: 10px;
+    display:grid; grid-template-columns:130px 1fr; gap:12px 18px;
+    align-items:center; margin-top:10px;
   }
-  #orderForm label {
-    text-align: right;
-    font-weight: bold;
-    color: #fff;
-    background: #b50000;
-    padding: 6px 8px;
-    border-radius: 6px;
-    text-shadow: 1px 1px 2px #000;
-  }
-  @media (max-width: 600px) {
-    #orderForm.form-grid { grid-template-columns: 1fr; }
-    #orderForm label { text-align: left; }
+  #orderForm label { text-align:right; font-weight:bold; color:#fff;
+    background:#b50000; padding:6px 8px; border-radius:6px; text-shadow:1px 1px 2px #000; }
+  @media(max-width:600px){
+    #orderForm.form-grid{grid-template-columns:1fr;}
+    #orderForm label{text-align:left;}
   }
 
-  /* 查詢訂單頁 */
-  #queryPage .query-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-bottom: 10px;
+  #queryPage .query-row{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:10px; margin-bottom:10px;
   }
-  #queryPage label {
-    width: 150px;
-    font-weight: bold;
-    color: #b50000;
-    text-align: right;
+  #queryPage label{
+    width:150px; font-weight:bold; color:#b50000; text-align:right;
   }
-  #queryPage input { flex: 1; min-width: 150px; }
-  #queryPage button { white-space: nowrap; }
-  #orderList table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: auto;
-  background: #fff9e6;
-}
-#orderList th, #orderList td {
-  text-align: center;
-  white-space: normal;
-  word-wrap: break-word;
-  padding: 10px 8px;
-  color: #333;
-  min-width: 80px;
-}
-#orderList th {
-  background: #ffe2b3;
-  color: #b50000;
-}
+  #queryPage input{ flex:1; min-width:150px; }
+  #orderList table{
+    width:100%; border-collapse:collapse; table-layout:auto;
+    background:#fff9e6; word-break:break-word;
+  }
+  #orderList th,#orderList td{
+    text-align:center; padding:10px 8px; color:#333; min-width:80px;
+  }
+  #orderList th{ background:#ffe2b3; color:#b50000; }
 </style>
 </head>
 <body>
 <div class="overlay"></div>
 <div id="cartIcon" onclick="toggleCart()">🛒<div id="cartCount">0</div></div>
 <div id="cartOverlay" onclick="toggleCart()"></div>
-<div id="cartPanel"><h3>購物車清單</h3>
-<div id="cartList"></div><button onclick="submitCart()">送出訂單</button></div>
+<div id="cartPanel">
+  <h3>購物車清單</h3>
+  <div id="cartList"></div>
+  <button onclick="submitCart()">送出訂單</button>
+</div>
 
 <div class="container" id="homePage">
   <img src="logo.png" width="80" />
@@ -300,12 +169,12 @@
 <script>
 const WEB_APP_URL="https://script.google.com/macros/s/AKfycbxiaGIP6QOBDRJzzaRW_EH2WUMpqEg4UF8jfaO2XUZ2cTSywnH0fg_NtYKN9BYn78EJ/exec";
 let allProducts=[],cart=[],redPacketTimer;
+
 function showPopup(t,d=1800){
   const p=document.getElementById('popupMsg');
   p.textContent=t;p.style.display='block';
   setTimeout(()=>{p.style.display='none';},d);
 }
-
 function startRedPackets(){stopRedPackets();redPacketTimer=setInterval(()=>{for(let i=0;i<3;i++){const rp=document.createElement('div');rp.className='redpacket';rp.style.left=Math.random()*100+'vw';rp.style.animationDuration=5+Math.random()*3+'s';document.body.appendChild(rp);setTimeout(()=>rp.remove(),9000);}},1500);}
 function stopRedPackets(){clearInterval(redPacketTimer);document.querySelectorAll('.redpacket').forEach(e=>e.remove());}
 function showPage(id){document.querySelectorAll('.container').forEach(e=>e.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='homePage'){startRedPackets();}else{stopRedPackets();}}
@@ -314,72 +183,48 @@ function fillMerchants(){const merchants=[...new Set(allProducts.map(p=>p.vendor
 function fillProducts(vendor){const ps=allProducts.filter(p=>p.vendor===vendor);const p=document.getElementById('product');p.innerHTML='<option value="">請選擇商品</option>'+ps.map(x=>`<option value="${x.item}" data-price="${x.price}">${x.item} - $${x.price}</option>`).join('');p.onchange=()=>{document.getElementById('qty').value=1;};}
 function addToCart(){const buyer=document.getElementById('buyerName').value.trim();const vendor=document.getElementById('merchant').value;const prodSel=document.getElementById('product');const item=prodSel.value;const price=Number(prodSel.selectedOptions[0]?.dataset.price||0);const qty=Number(document.getElementById('qty').value);if(!buyer||!vendor||!item){showPopup('⚠️ 請完整填寫');return;}cart.push({buyer,vendor,item,price,qty});document.getElementById('cartCount').textContent=cart.length;showPopup('✅ 已加入購物車！');}
 function toggleCart(){const p=document.getElementById('cartPanel');const o=document.getElementById('cartOverlay');const a=p.classList.toggle('active');o.classList.toggle('active',a);if(a)renderCart();}
-function renderCart(){const d=document.getElementById('cartList');if(!cart.length){d.innerHTML='<p>購物車是空的。</p>';return;}let html='<table><tr><th>商品</th><th>數量</th><th>小計</th><th></th></tr>';cart.forEach((c,i)=>{html+=`<tr><td>${c.item}</td><td>${c.qty}</td><td>$${c.price*c.qty}</td><td><button style="font-size:12px;padding:3px 6px;border-radius:4px;" onclick="delItem(${i})">❌</button></td></tr>`;});
-const total=cart.reduce((a,b)=>a+b.price*b.qty,0);html+=`</table><p><b>總計：$${total}</b></p>`;d.innerHTML=html;}
+function renderCart(){const d=document.getElementById('cartList');if(!cart.length){d.innerHTML='<p>購物車是空的。</p>';return;}let html='<table><tr><th>商品</th><th>數量</th><th>小計</th><th></th></tr>';cart.forEach((c,i)=>{html+=`<tr><td>${c.item}</td><td>${c.qty}</td><td>$${c.price*c.qty}</td><td><button style="font-size:12px;padding:3px 6px;border-radius:4px;" onclick="delItem(${i})">❌</button></td></tr>`;});const total=cart.reduce((a,b)=>a+b.price*b.qty,0);html+=`</table><p><b>總計：$${total}</b></p>`;d.innerHTML=html;}
 function delItem(i){cart.splice(i,1);document.getElementById('cartCount').textContent=cart.length;renderCart();}
-async function submitCart() {
-  if (!cart.length) { showPopup('購物車是空的'); return; }
-  if (!window.confirm('確定要送出這些訂單嗎？')) return;
 
-  const tasks = cart.map(c => {
-    const f = new FormData();
-    f.append('action', 'addOrder');
-    f.append('name', c.buyer);
-    f.append('vendor', c.vendor);
-    f.append('item', c.item);
-    f.append('qty', c.qty);
-    f.append('price', c.price);
-
-    // 每筆訂單加上重試機制
-    return fetch(WEB_APP_URL, { method: 'POST', body: f, mode: 'cors' })
-      .catch(err => {
-        console.warn('重試中...', err);
-        return fetch(WEB_APP_URL, { method: 'POST', body: f, mode: 'cors' });
-      });
-  });
-
-  try {
-    await Promise.all(tasks);
-    showPopup('✅ 所有訂單已成功送出！');
-    cart = [];
-    document.getElementById('cartCount').textContent = 0;
-    toggleCart();
-    document.getElementById('buyerName').value = '';
-    document.getElementById('merchant').selectedIndex = 0;
-    document.getElementById('product').innerHTML = '<option value="">請選擇商品</option>';
-    document.getElementById('qty').value = 1;
-  } catch (err) {
-    console.error('訂單送出發生錯誤：', err);
-    showPopup('⚠️ 部分訂單未成功送出，請稍後再試');
-  }
+// ✅ 修正版：避免 CORS、批次送出
+async function submitCart(){
+  if(!cart.length){showPopup('購物車是空的');return;}
+  if(!window.confirm('確定要送出這些訂單嗎？'))return;
+  try{
+    const f=new FormData();
+    f.append('action','addBatchOrders');
+    f.append('orders',JSON.stringify(cart));
+    await fetch(WEB_APP_URL,{method:'POST',mode:'no-cors',body:f});
+    showPopup('✅ 訂單已送出！請稍後查詢確認');
+    cart=[];document.getElementById('cartCount').textContent=0;toggleCart();
+    document.getElementById('buyerName').value='';
+    document.getElementById('merchant').selectedIndex=0;
+    document.getElementById('product').innerHTML='<option value="">請選擇商品</option>';
+    document.getElementById('qty').value=1;
+  }catch(err){console.error(err);showPopup('⚠️ 系統錯誤，請稍後再試');}
 }
 
-function searchOrders() {
-  const name = document.getElementById('queryName').value.trim();
-  if (!name) { showPopup('請輸入姓名'); return; }
-
+function searchOrders(){
+  const name=document.getElementById('queryName').value.trim();
+  if(!name){showPopup('請輸入姓名');return;}
   fetch(`${WEB_APP_URL}?action=getOrders&name=${encodeURIComponent(name)}`)
-    .then(r => r.json())
-    .then(d => {
-      const l = document.getElementById('orderList');
-      if (!d.length) { l.innerHTML = '<p>查無訂單。</p>'; return; }
-
-      let total = 0;
-      let html = '<table><tr><th>商家</th><th>商品名稱</th><th>數量</th><th>金額</th></tr>';
-      d.forEach(o => {
-        const subtotal = Number(o.price) * Number(o.qty || 1);
-        total += subtotal;
-        html += `<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>$${subtotal}</td></tr>`;
-      });
-      html += `<tr style="font-weight:bold;background:#ffe2b3;color:#b50000;"><td colspan="3">合計</td><td>$${total}</td></tr>`;
-      html += '</table>';
-      l.innerHTML = html;
-    })
-    .catch(err => {
-      console.error('查詢錯誤：', err);
-      showPopup('⚠️ 查詢失敗，請稍後再試');
+  .then(r=>r.json())
+  .then(d=>{
+    const l=document.getElementById('orderList');
+    if(!d.length){l.innerHTML='<p>查無訂單。</p>';return;}
+    let total=0;
+    let html='<table><tr><th>商家</th><th>商品名稱</th><th>數量</th><th>金額</th></tr>';
+    d.forEach(o=>{
+      const subtotal=Number(o.price)*Number(o.qty||1);
+      total+=subtotal;
+      html+=`<tr><td>${o.vendor}</td><td>${o.item}</td><td>${o.qty}</td><td>$${subtotal}</td></tr>`;
     });
+    html+=`<tr style="font-weight:bold;background:#ffe2b3;color:#b50000;"><td colspan="3">合計</td><td>$${total}</td></tr></table>`;
+    l.innerHTML=html;
+  })
+  .catch(err=>{console.error(err);showPopup('⚠️ 查詢失敗，請稍後再試');});
 }
+
 window.addEventListener('DOMContentLoaded',()=>{startRedPackets();preloadData();});
 </script>
 </body></html>
