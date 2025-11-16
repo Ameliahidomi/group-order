@@ -179,7 +179,37 @@ function startRedPackets(){stopRedPackets();redPacketTimer=setInterval(()=>{for(
 function stopRedPackets(){clearInterval(redPacketTimer);document.querySelectorAll('.redpacket').forEach(e=>e.remove());}
 function showPage(id){document.querySelectorAll('.container').forEach(e=>e.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='homePage'){startRedPackets();}else{stopRedPackets();}}
 function preloadData(){const m=document.getElementById('merchant');m.innerHTML='<option>讀取中...</option>';fetch(`${WEB_APP_URL}?action=getProducts`).then(r=>r.json()).then(d=>{allProducts=d;fillMerchants();}).catch(()=>{m.innerHTML='<option>載入失敗</option>';showPopup('⚠️ 無法載入商品資料');});}
-function fillMerchants(){const merchants=[...new Set(allProducts.map(p=>p.vendor))];const m=document.getElementById('merchant');m.innerHTML='<option value="">請選擇商家</option>'+merchants.map(x=>`<option>${x}</option>`).join('');m.onchange=()=>{fillProducts(m.value);document.getElementById('qty').value=1;};}
+
+// 商家網址對照表（放在 fillMerchants 外面）
+const vendorLinks = {
+  "裕芳食品行": "https://www.yufang.com.tw/category",
+  "寶哥麻花捲": "https://www.apocookie.com.tw/shopping.html"
+};
+
+function fillMerchants() {
+  const merchants = [...new Set(allProducts.map(p => p.vendor))];
+  const m = document.getElementById('merchant');
+
+  m.innerHTML =
+    '<option value="">請選擇商家</option>' +
+    merchants.map(v => `<option>${v}</option>`).join('');
+
+  m.onchange = () => {
+    const vendor = m.value;
+    fillProducts(vendor);
+    document.getElementById('qty').value = 1;
+
+    // 🔍 自動開啟商家網址
+    const url = vendorLinks[vendor];
+
+    if (url) {
+      setTimeout(() => {
+        window.open(url, "_blank");
+      }, 200); // 避免部分手機瀏覽器阻擋
+    }
+  };
+}
+
 function fillProducts(vendor){const ps=allProducts.filter(p=>p.vendor===vendor);const p=document.getElementById('product');p.innerHTML='<option value="">請選擇商品</option>'+ps.map(x=>`<option value="${x.item}" data-price="${x.price}">${x.item} - $${x.price}</option>`).join('');p.onchange=()=>{document.getElementById('qty').value=1;};}
 function addToCart(){const buyer=document.getElementById('buyerName').value.trim();const vendor=document.getElementById('merchant').value;const prodSel=document.getElementById('product');const item=prodSel.value;const price=Number(prodSel.selectedOptions[0]?.dataset.price||0);const qty=Number(document.getElementById('qty').value);if(!buyer||!vendor||!item){showPopup('⚠️ 請完整填寫');return;}cart.push({buyer,vendor,item,price,qty});document.getElementById('cartCount').textContent=cart.length;showPopup('✅ 已加入購物車！');}
 function toggleCart(){const p=document.getElementById('cartPanel');const o=document.getElementById('cartOverlay');const a=p.classList.toggle('active');o.classList.toggle('active',a);if(a)renderCart();}
